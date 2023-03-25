@@ -15,7 +15,7 @@ zNmap Parser is a Python script that parses the output of the nmap tool and cate
 `nmap -oN scan_results.txt <target_network>`
 
 2. Run the zNmap Parser script on the scan report:
-`python3 znmapadv.py scan_results.txt`
+`python3 zNmap-Parser.py scan_results.txt`
 This will parse the nmap output and categorize the open ports on each host.
 
 3. The script will print the results to the console and save them to an output file (if specified).
