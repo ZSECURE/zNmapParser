@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 import re
 import argparse
+import os
 from termcolor import colored
 
 def parse_nmap_output(nmap_output):
-    # Initialize dictionaries to hold the categorized open ports for each host
+    # Initialise dictionaries to hold the categorised open ports for each host
     domain_controllers = {}
     printers = {}
     web_servers = {}
@@ -36,7 +37,7 @@ def parse_nmap_output(nmap_output):
             port_number = int(port_match.group(1))
             service_name = port_match.group(2)
             
-            # Categorize the open ports based on their common use cases
+            # Categorise the open ports based on their common use cases
             if port_number in [389, 636, 3268, 3269]:
                 if ip_address:
                     domain_controllers[ip_address] = domain_controllers.get(ip_address, []) + [port_number]
@@ -83,10 +84,10 @@ def parse_nmap_output(nmap_output):
                 if ip_address:
                     remote_administration_tools[ip_address] = remote_administration_tools.get(ip_address, []) + [port_number]
         
-    # Return the categorized open ports for each host
+    # Return the categorised open ports for each host
     return {
         colored("Exploitable Services", "red"): exploitable_services,
-        colored("Domain Controllers", "white"): domain_controllers,
+        colored("Domain Controllers", "magenta"): domain_controllers,
         "Printers": printers,
         "Windows Hosts": windows_hosts,
         "Web Servers": web_servers,
@@ -117,18 +118,18 @@ BANNER = '''
 if __name__ == '__main__':
     print(BANNER)
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description='Parse nmap output and categorize open ports by common use cases.')
+    parser = argparse.ArgumentParser(description='Parse nmap output and categorise open ports by common use cases.')
     parser.add_argument('nmap_file', help='Path to the nmap output file')
     parser.add_argument('-o', '--output', help='Output file name')
+    parser.add_argument('-d', '--directory', help='Output directory for category files')
     args = parser.parse_args()
 
     # Read the nmap output file
     with open(args.nmap_file, 'r') as f:
         nmap_output = f.read()
 
-    # Parse the nmap output and categorize the open ports
+    # Parse the nmap output and categorise the open ports
     results = parse_nmap_output(nmap_output)
-
 
     # Write the results to the output file
     if args.output:
@@ -138,9 +139,22 @@ if __name__ == '__main__':
                 if not hosts:
                     f.write("\tNo hosts found.")
                 else:
-                    for host, ports in hosts.items():
-                        f.write(f"\t{host}: {', '.join(str(port) for port in ports)}\n")
+                    for host in hosts.keys():
+                        f.write(f"\t{host}\n")
                 f.write("\n")
+
+    # Write the results to separate files in the specified directory
+    if args.directory:
+        os.makedirs(args.directory, exist_ok=True)
+        for category, hosts in results.items():
+            if hosts:  # Only save if there are hosts in the category
+                # Remove color codes for the filename
+                category_filename = re.sub(r'\x1b\[[0-9;]*m', '', category)
+                category_filename = category_filename.replace(' ', '_') + '.txt'
+                filepath = os.path.join(args.directory, category_filename)
+                with open(filepath, 'w') as f:
+                    for host in hosts.keys():
+                        f.write(f"{host}\n")
 
     # Print the results to the console
     for category, hosts in results.items():
@@ -148,8 +162,8 @@ if __name__ == '__main__':
             print(colored(f"{category}:", "red"))
         elif category in (colored("Email Servers", "yellow"), colored("VoIP Servers", "blue"), colored("FTP Servers", "yellow")):
             print(colored(f"{category}:", "yellow"))
-        elif category in colored("Domain Controllers", "white"):
-            print(colored(f"{category}:", "white"))
+        elif category in colored("Domain Controllers", "magenta"):
+            print(colored(f"{category}:", "magenta"))
         else:
             print(f"{category}:")
         if not hosts:
