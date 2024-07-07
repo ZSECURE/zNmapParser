@@ -1,6 +1,6 @@
 # zNmap Parser
 
-zNmap Parser is a Python script that parses the output of the nmap tool and categorizes the open ports on each host. The script can help identify potential attack vectors during a penetration testing engagement.
+zNmap Parser is a Python script that parses the output of the nmap tool and categorises the open ports on each host. The script can help identify potential attack vectors during a penetration testing engagement.
 
 ## Requirements
 
@@ -16,13 +16,13 @@ zNmap Parser is a Python script that parses the output of the nmap tool and cate
 
 2. Run the zNmap Parser script on the scan report:
 `python3 zNmap-Parser.py scan_results.txt`
-This will parse the nmap output and categorize the open ports on each host.
+This will parse the nmap output and categorise the open ports on each host.
 
 3. The script will print the results to the console and save them to an output folder (if specified).
 
 ## Categories
 
-The zNmap Parser script categorizes open ports on each host into the following categories:
+The zNmap Parser script categorises open ports on each host into the following categories:
 
 - Domain controllers
 - Printers
@@ -61,7 +61,7 @@ The script prints the results to the console and saves them to an output folder 
 - `<host>`: The IP address of the host that has the open ports.
 - `<port>`: The port number that is open on the host.
 
-The saved output is formatted as follows so it can be easily using as input in other tools:
+The saved output is formatted as follows so it can be easily used as input in other tools:
 ```
 <host>
 <host>
